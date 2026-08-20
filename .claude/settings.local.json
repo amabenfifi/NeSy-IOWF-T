@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"https://search.maven.org/solrsearch/select?q=g:org.jadex%20AND%20a:jadex-active-components&rows=5&wt=json\")",
+      "Bash(curl -s \"https://search.maven.org/solrsearch/select?q=g:org.jadex%20AND%20a:jadex-active-components&rows=5\")",
+      "Bash(curl -s \"https://repo1.maven.org/maven2/\")",
+      "Bash(rtk grep *)",
+      "Bash(curl -s \"https://search.maven.org/solrsearch/select?q=jadex+active+components&rows=10&wt=json\")",
+      "Bash(rtk curl *)",
+      "Bash(rtk mvn *)",
+      "Bash(curl -s \"https://search.maven.org/solrsearch/select?q=g:org.eclipse.rdf4j%20AND%20a:rdf4j-rio&rows=10&wt=json\")",
+      "Bash(curl -s \"https://search.maven.org/solrsearch/select?q=g:org.eclipse.rdf4j%20AND%20a:rdf4j-rio&rows=20\")",
+      "Bash(curl -s \"https://repo1.maven.org/maven2/org/eclipse/rdf4j/rdf4j-rio/maven-metadata.xml\")",
+      "Bash(mvn validate *)",
+      "Bash(rtk ls *)",
+      "Bash(rtk read *)",
+      "Bash(mvn exec:java *)",
+      "Bash(rtk find *)",
+      "Bash(xargs wc -l)",
+      "Bash(mvn dependency:tree *)",
+      "Bash(mvn clean *)",
+      "Bash(mvn test *)",
+      "Bash(rtk docker *)",
+      "WebSearch",
+      "Bash(jar -tf /c/Users/Asus/.m2/repository/org/activecomponents/jadex/jadex-kernel-bdiv3/4.0.267/jadex-kernel-bdiv3-4.0.267.jar)",
+      "Bash(jar -tf /c/Users/Asus/.m2/repository/org/activecomponents/jadex/jadex-applications-bdi/4.0.267/jadex-applications-bdi-4.0.267.jar)",
+      "Bash(jar -tf \"/c/Users/Asus/.m2/repository/org/activecomponents/jadex/jadex-kernel-micro/4.0.267/jadex-kernel-micro-4.0.267.jar\")",
+      "Bash(jar -tf \"/c/Users/Asus/.m2/repository/org/activecomponents/jadex/jadex-kernel-bdiv3/4.0.267/jadex-kernel-bdiv3-4.0.267.jar\")",
+      "Bash(head-20)",
+      "Bash(jar -tf \"/c/Users/Asus/.m2/repository/org/activecomponents/jadex/jadex-bdiv3/4.0.267/jadex-bdiv3-4.0.267.jar\")"
+    ]
+  }
+}

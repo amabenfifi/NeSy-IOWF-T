@@ -1,0 +1,32 @@
+<configuration>
+    <!-- 1. Affichage pour le terminal (Console) -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 2. Écriture physique pour le fichier CSV -->
+    <appender name="CSV_FILE" class="ch.qos.logback.core.FileAppender">
+        <!-- Chemin cible absolu dans le conteneur Docker -->
+        <file>/app/logs/nesy_metrics.csv</file>
+        <append>true</append>
+        <!-- Force l'écriture immédiate sur le disque pour éviter la perte de données -->
+        <immediateFlush>true</immediateFlush>
+        <encoder>
+            <!-- Format strict : uniquement vos données (points-virgules), sans texte autour -->
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 3. Routage de vos métriques spécifiques -->
+    <logger name="CSV_METRICS" level="INFO" additivity="false">
+        <appender-ref ref="CSV_FILE" />
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <!-- 4. Routage par défaut pour le reste du framework Jadex -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>

@@ -1,0 +1,12 @@
+# Fichiers de compilation Maven
+target/
+*.jar
+
+# Logs et télémétrie
+logs/
+*.log
+nesy_metrics.csv
+
+# Fichiers de l'IDE
+.vscode/
+.idea/

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components xmlns="http://jadex.sourceforge.net/components"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://jadex.sourceforge.net/components
+                                http://jadex.sourceforge.net/components/components.xsd">
+
+    <component>
+        <name>NeSy-IOWF++_T Platform</name>
+        <description>Platform running NeSy-IOWF++_T initiator and archivist agents</description>
+
+        <!-- Platform configuration -->
+        <configuration>
+            <entry key="jadex.platform.startplatform">true</entry>
+            <entry key="jadex.platform.gui">false</entry>
+            <entry key="jadex.platform.naming">false</entry>
+            <entry key="jadex.platform.id">nesy-iowf-platform</entry>
+        </configuration>
+
+        <!-- Components -->
+        <components>
+
+            <!-- Directory Facilitator (for service discovery) -->
+            <component>
+                <ref>jadex.component.df</ref>
+                <configuration>
+                    <entry key="jadex.component.df.autoregister">true</entry>
+                </configuration>
+            </component>
+
+            <!-- Initiator Agent -->
+            <component>
+                <name>initiator-agent</name>
+                <class>org.wiofc.poc.jadex.InitiatorAgent</class>
+                <configuration>
+                    <entry key="jadex.agent.lifetime">eternal</entry>
+                </configuration>
+            </component>
+
+            <!-- Archivist Agent 1 -->
+            <component>
+                <name>archivist-agent-1</name>
+                <class>org.wiofc.poc.jadex.ArchivistAgent</class>
+                <configuration>
+                    <entry key="jadex.agent.lifetime">eternal</entry>
+                </configuration>
+            </component>
+
+            <!-- Archivist Agent 2 -->
+            <component>
+                <name>archivist-agent-2</name>
+                <class>org.wiofc.poc.jadex.ArchivistAgent</class>
+                <configuration>
+                    <entry key="jadex.agent.lifetime">eternal</entry>
+                </configuration>
+            </component>
+
+        </components>
+    </component>
+
+</components>
