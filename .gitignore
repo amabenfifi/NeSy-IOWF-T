@@ -10,3 +10,7 @@ nesy_metrics.csv
 # Fichiers de l'IDE
 .vscode/
 .idea/
+
+# Fichiers de configuration IA
+.claude/
+CLAUDE.md
