@@ -8,6 +8,7 @@ import org.wiofc.poc.symbolic.RobddEvaluator;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Agent
 public class ArchivisteAgent {
@@ -15,9 +16,14 @@ public class ArchivisteAgent {
     private static final Logger metricsLogger = LoggerFactory.getLogger("CSV_METRICS");
     private RobddEvaluator robddEvaluator;
 
+    // Générateur d'ID 100% Java (contournement de l'API Jadex)
+    private static final AtomicInteger agentCounter = new AtomicInteger(1);
+    private final int myId = agentCounter.getAndIncrement();
+
     @AgentBody
     public void executeBody() {
-        System.out.println("[Archiviste] Moteur ROBDD en ligne. En attente de la charge réseau...");
+        String nomAgent = "Archiviste_" + myId;
+        System.out.println("[" + nomAgent + "] Moteur ROBDD en ligne. En attente de la charge réseau...");
 
         robddEvaluator = new RobddEvaluator();
         robddEvaluator.addTemporalConstraint("maxProcessingTime", 5000);
@@ -25,10 +31,6 @@ public class ArchivisteAgent {
 
         Random rand = new Random();
         int nombreRequetes = 100;
-
-        System.out.println("[Archiviste] Traitement de " + nombreRequetes + " workflows B2B en cours...");
-        // NOUVELLE LIGNE : Injection de l'en-tête du fichier CSV
-        metricsLogger.info("ID_Agent_Requete;Temps_Traitement_ms;Latence_Reseau_ms;Taille_Trace");
 
         for (int i = 1; i <= nombreRequetes; i++) {
             long startTime = System.currentTimeMillis();
@@ -39,14 +41,15 @@ public class ArchivisteAgent {
             HashMap<String, Boolean> actualBoolean = new HashMap<>();
             actualBoolean.put("requireValidCertificate", rand.nextBoolean());
 
+            double robddFactor = robddEvaluator.evaluateRobddFactor(actualTemporal, actualBoolean);
+
             long processingTime = System.currentTimeMillis() - startTime;
             long latency = 10 + rand.nextInt(40);
 
-            String agentId = "Archiviste_1_Req_" + i;
+            String agentId = nomAgent + "_Req_" + i;
             metricsLogger.info("{};{};{};1", agentId, processingTime, latency);
         }
 
-        System.out.println(
-                "[Archiviste] ✅ Test de charge terminé. " + nombreRequetes + " lignes ajoutées au fichier CSV.");
+        System.out.println("[" + nomAgent + "] ✅ Test de charge terminé.");
     }
 }
