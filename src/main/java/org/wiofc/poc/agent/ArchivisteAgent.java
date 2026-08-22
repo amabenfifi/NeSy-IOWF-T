@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.wiofc.poc.symbolic.RobddEvaluator;
 
 import java.util.HashMap;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Random;
 
 @Agent
 public class ArchivisteAgent {
@@ -16,54 +16,62 @@ public class ArchivisteAgent {
     private static final Logger metricsLogger = LoggerFactory.getLogger("CSV_METRICS");
     private RobddEvaluator robddEvaluator;
 
-    // Générateur d'ID 100% Java (contournement de l'API Jadex)
     private static final AtomicInteger agentCounter = new AtomicInteger(1);
     private final int myId = agentCounter.getAndIncrement();
 
     @AgentBody
     public void executeBody() {
         String nomAgent = "Archiviste_" + myId;
-        System.out.println("[" + nomAgent + "] Moteur ROBDD en ligne. En attente de la charge réseau...");
+        MessageBus.register(nomAgent);
 
-        // --- 1. CONFIGURATION DU MOTEUR ROBDD ---
+        System.out.println("[" + nomAgent + "] Chorégraphie activée. Moteur ROBDD/HDC en écoute...");
+
+        // Initialisation du cerveau neuro-symbolique
         robddEvaluator = new RobddEvaluator();
         robddEvaluator.addTemporalConstraint("maxProcessingTime", 5000);
         robddEvaluator.addBooleanConstraint("requireValidCertificate", true);
-
-        // NOUVEAU : Le service doit être validé par l'ontologie (Subsomption)
         robddEvaluator.addBooleanConstraint("semanticSubsumptionValid", true);
 
         Random rand = new Random();
-        int nombreRequetes = 100;
 
-        // --- 2. TRAITEMENT DE LA CHARGE RESEAU ---
-        for (int i = 1; i <= nombreRequetes; i++) {
-            long startTime = System.currentTimeMillis();
+        try {
+            while (true) {
+                // 1. Écoute du réseau (Bloquant jusqu'à l'arrivée d'une requête P2P)
+                FipaMessage msg = MessageBus.receive(nomAgent);
 
-            // Injection des paramètres temporels
-            HashMap<String, Long> actualTemporal = new HashMap<>();
-            actualTemporal.put("maxProcessingTime", 1000L + rand.nextInt(5000));
+                if (msg.performative == FipaMessage.Performative.CFP) {
+                    long startTime = System.currentTimeMillis();
+                    String reqId = (String) msg.content.get("reqId");
 
-            // Injection des paramètres booléens (Certificat + Sémantique)
-            HashMap<String, Boolean> actualBoolean = new HashMap<>();
-            actualBoolean.put("requireValidCertificate", rand.nextBoolean());
+                    // 2. Extraction des vraies données du contrat inter-organisationnel
+                    HashMap<String, Long> actualTemporal = new HashMap<>();
+                    actualTemporal.put("maxProcessingTime", (Long) msg.content.get("maxProcessingTime"));
 
-            // NOUVEAU : Simulation du pont sémantique (Taux de validation de 80%)
-            boolean isSubsumed = rand.nextDouble() > 0.2;
-            actualBoolean.put("semanticSubsumptionValid", isSubsumed);
+                    HashMap<String, Boolean> actualBoolean = new HashMap<>();
+                    actualBoolean.put("requireValidCertificate", (Boolean) msg.content.get("requireValidCertificate"));
+                    actualBoolean.put("semanticSubsumptionValid",
+                            (Boolean) msg.content.get("semanticSubsumptionValid"));
 
-            // Évaluation de l'arbre de décision
-            double robddFactor = robddEvaluator.evaluateRobddFactor(actualTemporal, actualBoolean);
+                    // 3. Cœur de l'architecture : Évaluation Neuro-Symbolique
+                    double robddFactor = robddEvaluator.evaluateRobddFactor(actualTemporal, actualBoolean);
 
-            // Calcul des métriques
-            long processingTime = System.currentTimeMillis() - startTime;
-            long latency = 10 + rand.nextInt(40);
+                    // 4. Prise de décision B2B
+                    FipaMessage.Performative replyPerformative = (robddFactor == 1.0) ? FipaMessage.Performative.AGREE
+                            : FipaMessage.Performative.REFUSE;
 
-            // Écriture dans le fichier CSV
-            String agentId = nomAgent + "_Req_" + i;
-            metricsLogger.info("{};{};{};1", agentId, processingTime, latency);
+                    // Sauvegarde des métriques
+                    long processingTime = System.currentTimeMillis() - startTime;
+                    long latency = 10 + rand.nextInt(40);
+                    metricsLogger.info("{};{};{};1", reqId, processingTime, latency);
+
+                    // 5. Finalisation de la chorégraphie : Envoi de la réponse à l'Initiateur
+                    FipaMessage reply = new FipaMessage(replyPerformative, nomAgent, msg.sender, new HashMap<>());
+                    MessageBus.send(reply);
+                }
+            }
+        } catch (InterruptedException e) {
+            System.out.println("[" + nomAgent + "] Extinction de l'agent.");
+            Thread.currentThread().interrupt();
         }
-
-        System.out.println("[" + nomAgent + "] ✅ Test de charge terminé.");
     }
 }
